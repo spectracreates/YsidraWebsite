@@ -1,11 +1,12 @@
-import Link from "next/link";
+import Link from "@/components/L";
 import Pic from "./Pic";
 import { site, clients, blogger } from "@/lib/content";
 import { img, srcSet, bimg } from "@/lib/util";
+import blur from "@/lib/blur.json";
 
 export function PageHero({ title, lede, crumbs, image, children }) {
   return (
-    <section className={`phero${image ? " img" : ""}`}>
+    <section className={`phero${image ? " img" : ""}`} style={image && blur[image] ? { backgroundImage: `url(${blur[image]})`, backgroundSize: "cover", backgroundPosition: "center" } : undefined}>
       {image && <img src={img(image)} srcSet={srcSet(image)} sizes="100vw" alt="" fetchPriority="high" decoding="async" />}
       <div className="wrap">
         {crumbs && (

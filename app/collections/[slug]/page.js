@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/L";
 import { notFound } from "next/navigation";
 import ProductGallery from "@/components/ProductGallery";
 import { ProductCard, CtaBand } from "@/components/Blocks";

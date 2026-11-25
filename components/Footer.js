@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/L";
 import { site, solutions } from "@/lib/content";
 
 export default function Footer() {

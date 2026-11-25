@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/L";
 import Pic from "@/components/Pic";
 import { PageHero, CtaBand, ClientMarquee } from "@/components/Blocks";
 import { about, stats, workflow, site } from "@/lib/content";

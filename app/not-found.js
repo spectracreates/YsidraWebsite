@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/L";
 export default function NotFound() {
   return (
     <section className="band navy" style={{ minHeight: "70vh", display: "grid", alignItems: "center" }}>

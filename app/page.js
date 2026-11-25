@@ -1,16 +1,17 @@
-import Link from "next/link";
+import Link from "@/components/L";
 import Pic from "@/components/Pic";
 import HeroMedia from "@/components/HeroMedia";
 import GalleryGrid from "@/components/GalleryGrid";
 import Testimonials from "@/components/Testimonials";
 import { ProductCard, CtaBand, ClientMarquee, CoverMarquee } from "@/components/Blocks";
 import { bimg } from "@/lib/util";
+import blur from "@/lib/blur.json";
 import { site, stats, heroSlides, solutions, products, finishes, workflow, work, gallery, testimonials, about, services, brandWork, signature, founderNote, blogger } from "@/lib/content";
 
 export default function Home() {
   return (
     <>
-      <section className="hero" aria-label="YSIDRA">
+      <section className="hero" aria-label="YSIDRA" style={{ backgroundImage: `url(${blur[heroSlides[0].src]})`, backgroundSize: "cover", backgroundPosition: "center" }}>
         <HeroMedia slides={heroSlides} video={site.heroVideo} />
         <div className="hero-in">
           <h1><span className="ln"><span>Brands that work.</span></span><span className="ln"><span>Books that last.</span></span></h1>

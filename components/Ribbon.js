@@ -6,6 +6,9 @@ import { useEffect, useRef } from "react";
 export default function Ribbon() {
   const ref = useRef(null);
   useEffect(() => {
+    // Anything already on screen (or above it) stays put; only content further down animates in.
+    const vh = window.innerHeight;
+    document.querySelectorAll("[data-reveal]").forEach((el) => { if (el.getBoundingClientRect().top < vh) el.classList.add("in"); });
     document.documentElement.classList.add("js");
     let raf = 0;
     const set = () => {

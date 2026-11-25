@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/L";
 import { notFound } from "next/navigation";
 import Pic from "@/components/Pic";
 import { PageHero, CtaBand } from "@/components/Blocks";
