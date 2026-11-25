@@ -4,20 +4,19 @@ import HeroMedia from "@/components/HeroMedia";
 import GalleryGrid from "@/components/GalleryGrid";
 import Testimonials from "@/components/Testimonials";
 import { ProductCard, CtaBand, ClientMarquee, CoverMarquee } from "@/components/Blocks";
-import { site, stats, heroSlides, solutions, products, finishes, workflow, work, gallery, testimonials, about } from "@/lib/content";
+import { site, stats, heroSlides, solutions, products, finishes, workflow, work, gallery, testimonials, about, services, brandWork, signature, founderNote, blogger } from "@/lib/content";
 
 export default function Home() {
-  const featured = ["fabric-lined-leather-journal", "luxury-2027-diary", "ankara-journal", "event-souvenir-notebook"].map((id) => products.find((p) => p.id === id));
   return (
     <>
       <section className="hero" aria-label="YSIDRA">
         <HeroMedia slides={heroSlides} video={site.heroVideo} />
         <div className="hero-in">
-          <h1><span className="ln"><span>Made to</span></span><span className="ln"><span>be kept</span></span></h1>
-          <p className="sub">Premium notebooks, diaries and gifts for brands that want to be remembered</p>
+          <h1><span className="ln"><span>Brands that work.</span></span><span className="ln"><span>Books that last.</span></span></h1>
+          <p className="sub">A strategic brand and communication studio, and the maker of over two million premium notebooks since 2017</p>
           <div className="btn-row">
-            <Link href="/quote" className="btn btn-o">Get a quote</Link>
-            <Link href="/work" className="btn btn-ghost">See our work</Link>
+            <Link href="/quote" className="btn btn-o">Start a project</Link>
+            <Link href="/collections" className="btn btn-ghost">Explore collections</Link>
           </div>
         </div>
       </section>
@@ -29,6 +28,18 @@ export default function Home() {
           ))}
         </div>
       </nav>
+
+      <section className="band white tight" aria-label="Clients"><ClientMarquee /></section>
+
+      <section className="band navy" aria-labelledby="svc">
+        <div className="wrap">
+          <div className="head" data-reveal>
+            <div><h2 id="svc">Brand that works for you</h2><p className="lede">We define how your organisation is positioned, build your communication systems, and make sure you show up clearly across the moments that matter, down to the notebook on your client's desk.</p></div>
+            <Link href="/quote" className="btn btn-o">Start a project</Link>
+          </div>
+          <div className="svc">{services.map(([t, d]) => (<div key={t} data-reveal><h3>{t}</h3><p>{d}</p></div>))}</div>
+        </div>
+      </section>
 
       <section className="band" aria-label="YSIDRA in numbers">
         <div className="wrap stats">
@@ -61,10 +72,6 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="band deep tight" aria-labelledby="cl">
-        <div className="wrap"><p id="cl" className="lede" style={{ margin: "0 0 28px", textAlign: "center", maxWidth: "none" }}>Trusted by banks, energy companies, insurers, summits and families across Nigeria</p></div>
-        <ClientMarquee />
-      </section>
 
       <section className="band" aria-labelledby="std">
         <div className="wrap split">
@@ -82,10 +89,31 @@ export default function Home() {
       <section className="band white" aria-labelledby="col">
         <div className="wrap">
           <div className="head" data-reveal>
-            <div><h2 id="col">Signature pieces</h2><p className="lede">Five collections, dozens of finishes. These are the ones clients ask for most.</p></div>
+            <div><h2 id="col">Premium notebooks, designed with purpose</h2><p className="lede">Our signature collections. Every one can carry your brand.</p></div>
             <Link href="/collections" className="btn btn-line">All collections</Link>
           </div>
-          <div className="grid g4">{featured.map((p) => (<ProductCard key={p.id} p={p} />))}</div>
+          <div className="grid g4">
+            {signature.map((c) => (
+              <Link key={c.name} href={c.href} className="card" data-reveal>
+                <div className="ph"><img src={c.image} alt={c.name} loading="lazy" decoding="async" /></div>
+                <div className="bd"><h3>{c.name}</h3><p>{c.text}</p><span className="tlink">View collection</span></div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="band" aria-labelledby="bwh">
+        <div className="wrap">
+          <div className="head" data-reveal><div><h2 id="bwh">Building brands through clarity</h2><p className="lede">Strategy, identity and communication systems for organisations that want to be understood.</p></div></div>
+          <div className="bw">
+            {brandWork.map((w) => (
+              <Link key={w.name} href="/quote" className="card" data-reveal>
+                <div className="ph"><img src={w.image} alt={w.name} loading="lazy" decoding="async" /></div>
+                <div className="bd"><h3>{w.name}</h3><p>{w.text}</p></div>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -150,16 +178,27 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="band" aria-labelledby="imp">
-        <div className="wrap split rev">
-          <div className="tx" data-reveal>
-            <span className="pill">Our impact</span>
-            <h2 id="imp" style={{ marginTop: 16 }}>Every notebook writes a better future</h2>
-            <p className="big">{about.impact}</p>
-            <a href={site.shop} className="btn btn-o">Shop the book drive</a>
+      <section className="band" aria-labelledby="fnd">
+        <div className="wrap founder">
+          <figure data-reveal><img src={blogger.founderPortrait} alt="Yeye Durojaiye-Arogundade, founder of YSIDRA" loading="lazy" /></figure>
+          <div data-reveal>
+            <span className="pill">Founder note</span>
+            <h2 id="fnd" className="sr" style={{ position: "absolute", left: -9999 }}>{founderNote.title}</h2>
+            <blockquote style={{ marginTop: 20 }}>{founderNote.text}</blockquote>
+            <cite>{founderNote.sign}</cite>
+            <div className="btn-row" style={{ marginTop: 30 }}><Link href="/about" className="btn btn-n">Our story</Link></div>
           </div>
-          <figure className="bound" data-reveal><Pic name="ys-5537" alt="Printed notebook that reads She believed she could, so she did" /></figure>
         </div>
+      </section>
+
+      <section className="impact" aria-labelledby="imp">
+        <div className="tx" data-reveal>
+          <span className="pill" style={{ alignSelf: "start" }}>Our impact</span>
+          <h2 id="imp">A notebook that does more.</h2>
+          <p>{about.impact}</p>
+          <div className="btn-row"><a href={site.shop} className="btn btn-o">Shop and give</a><Link href="/about" className="btn btn-ghost">Learn more</Link></div>
+        </div>
+        <img src={blogger.impactPhoto} alt="Children learning in class" loading="lazy" />
       </section>
 
       <CtaBand />

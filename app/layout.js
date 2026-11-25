@@ -11,7 +11,7 @@ const body = Open_Sans({ subsets: ["latin"], weight: ["400", "600"], variable: "
 
 export const metadata = {
   metadataBase: new URL(site.url),
-  title: { default: "YSIDRA | Premium notebooks, diaries and gifts from Lagos", template: "%s | YSIDRA" },
+  title: { default: "YSIDRA | Brand strategy, design and premium notebooks, Lagos", template: "%s | YSIDRA" },
   description: site.description,
   openGraph: { siteName: "YSIDRA", type: "website", locale: "en_NG", images: [{ url: "/og.jpg", width: 1200, height: 630 }] },
   twitter: { card: "summary_large_image" },

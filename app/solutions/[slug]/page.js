@@ -40,7 +40,7 @@ export default function Solution({ params }) {
           <div className="grid g4">{items.map((p) => (<ProductCard key={p.id} p={p} />))}</div>
         </div>
       </section>
-      <section className="band deep tight"><ClientMarquee /></section>
+      <section className="band white tight"><ClientMarquee /></section>
       <section className="band">
         <div className="wrap">
           <div className="head" data-reveal><div><h2>From the studio</h2></div></div>

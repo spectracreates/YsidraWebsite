@@ -13,7 +13,7 @@ export default function Work() {
   return (
     <>
       <PageHero title="Our work" crumbs={[[null, "Our work"]]} lede="Books for brands that care how they are remembered. A few of our favourite projects." image="co-premium" />
-      <section className="band deep tight"><ClientMarquee /></section>
+      <section className="band white tight"><ClientMarquee /></section>
       <section className="band">
         <div className="wrap grid g3">
           {work.map((w) => (

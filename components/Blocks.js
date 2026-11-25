@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Pic from "./Pic";
-import { site, clients } from "@/lib/content";
+import { site, clients, blogger } from "@/lib/content";
 import { img } from "@/lib/util";
 
 export function PageHero({ title, lede, crumbs, image, children }) {
@@ -53,11 +53,14 @@ export function CtaBand({ title = "Let's make something worth keeping.", text = 
   );
 }
 
-export function ClientMarquee() {
-  const row = clients.map((c) => (<span className="client" key={c}>{c}</span>));
+export function ClientMarquee({ title = "Trusted by" }) {
+  const row = blogger.logos.map((u, i) => (<img key={i} src={u} alt="" loading="lazy" decoding="async" />));
   return (
-    <div className="marquee" style={{ "--dur": "60s" }} aria-label={`Clients include ${clients.join(", ")}`}>
-      <div className="track" aria-hidden="true">{row}{row}</div>
+    <div className="logowall">
+      <p className="logowall-t">{title}</p>
+      <div className="marquee logos" style={{ "--dur": "45s" }} aria-label={`Clients include ${clients.join(", ")}`}>
+        <div className="track" aria-hidden="true">{row}{row}</div>
+      </div>
     </div>
   );
 }

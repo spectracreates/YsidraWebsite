@@ -66,7 +66,7 @@ export default function About() {
           <p className="lede">The YSIDRA standard. Four lines every member of our team works by.</p>
         </div>
       </section>
-      <section className="band deep tight"><ClientMarquee /></section>
+      <section className="band white tight"><ClientMarquee /></section>
       <section className="band">
         <div className="wrap split rev">
           <div data-reveal>
