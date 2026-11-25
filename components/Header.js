@@ -58,7 +58,7 @@ export default function Header() {
       </header>
       <div id="mnav" className={`mnav${open ? " open" : ""}`} role="dialog" aria-modal="true" aria-label="Menu" aria-hidden={!open}>
         <div className="top">
-          <img src="/img/logo-light.png" alt="YSIDRA" width="514" height="172" />
+          <img src="/img/logo-light.png" alt="YSIDRA" width="514" height="172" loading="lazy" />
           <button className="burger" aria-label="Close menu" onClick={() => setOpen(false)}>
             <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"><path d="M6 6l16 16M22 6L6 22" /></svg>
           </button>

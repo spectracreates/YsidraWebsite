@@ -6,7 +6,7 @@ import Ribbon from "@/components/Ribbon";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
 import { site, clients } from "@/lib/content";
 
-const display = Montserrat({ subsets: ["latin"], weight: ["600", "700", "800", "900"], variable: "--font-display", display: "swap" });
+const display = Montserrat({ subsets: ["latin"], weight: ["700", "800", "900"], variable: "--font-display", display: "swap" });
 const body = Open_Sans({ subsets: ["latin"], weight: ["400", "600"], variable: "--font-body", display: "swap" });
 
 export const metadata = {
@@ -42,6 +42,9 @@ const ld = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en-NG" className={`${display.variable} ${body.variable}`}>
+      <head>
+        <link rel="preconnect" href="https://blogger.googleusercontent.com" crossOrigin="" />
+      </head>
       <body>
         <a className="skip" href="#main">Skip to content</a>
         <Header />

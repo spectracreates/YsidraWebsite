@@ -1,12 +1,12 @@
 import Link from "next/link";
 import Pic from "./Pic";
 import { site, clients, blogger } from "@/lib/content";
-import { img } from "@/lib/util";
+import { img, srcSet, bimg } from "@/lib/util";
 
 export function PageHero({ title, lede, crumbs, image, children }) {
   return (
     <section className={`phero${image ? " img" : ""}`}>
-      {image && <img src={img(image)} alt="" />}
+      {image && <img src={img(image)} srcSet={srcSet(image)} sizes="100vw" alt="" fetchPriority="high" decoding="async" />}
       <div className="wrap">
         {crumbs && (
           <nav className="crumbs" aria-label="Breadcrumb">
@@ -54,7 +54,7 @@ export function CtaBand({ title = "Let's make something worth keeping.", text = 
 }
 
 export function ClientMarquee({ title = "Trusted by" }) {
-  const row = blogger.logos.map((u, i) => (<img key={i} src={u} alt="" loading="lazy" decoding="async" />));
+  const row = blogger.logos.map((u, i) => (<img key={i} src={bimg(u, 400)} alt="" loading="lazy" decoding="async" height="62" />));
   return (
     <div className="logowall">
       <p className="logowall-t">{title}</p>
@@ -66,7 +66,7 @@ export function ClientMarquee({ title = "Trusted by" }) {
 }
 
 export function CoverMarquee({ items, rev }) {
-  const row = items.map((s, i) => (<img key={s + i} src={img(s)} alt="" loading="lazy" decoding="async" />));
+  const row = items.map((s, i) => (<img key={s + i} src={img(s, 480)} alt="" loading="lazy" decoding="async" width="208" height="260" />));
   return (
     <div className={`marquee covers${rev ? " rev" : ""}`} style={{ "--dur": "80s" }} aria-hidden="true">
       <div className="track">{row}{row}</div>

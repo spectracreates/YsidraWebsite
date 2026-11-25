@@ -4,6 +4,7 @@ import HeroMedia from "@/components/HeroMedia";
 import GalleryGrid from "@/components/GalleryGrid";
 import Testimonials from "@/components/Testimonials";
 import { ProductCard, CtaBand, ClientMarquee, CoverMarquee } from "@/components/Blocks";
+import { bimg } from "@/lib/util";
 import { site, stats, heroSlides, solutions, products, finishes, workflow, work, gallery, testimonials, about, services, brandWork, signature, founderNote, blogger } from "@/lib/content";
 
 export default function Home() {
@@ -95,7 +96,7 @@ export default function Home() {
           <div className="grid g4">
             {signature.map((c) => (
               <Link key={c.name} href={c.href} className="card" data-reveal>
-                <div className="ph"><img src={c.image} alt={c.name} loading="lazy" decoding="async" /></div>
+                <div className="ph"><img src={bimg(c.image, 600)} alt={c.name} loading="lazy" decoding="async" /></div>
                 <div className="bd"><h3>{c.name}</h3><p>{c.text}</p><span className="tlink">View collection</span></div>
               </Link>
             ))}
@@ -109,7 +110,7 @@ export default function Home() {
           <div className="bw">
             {brandWork.map((w) => (
               <Link key={w.name} href="/quote" className="card" data-reveal>
-                <div className="ph"><img src={w.image} alt={w.name} loading="lazy" decoding="async" /></div>
+                <div className="ph"><img src={bimg(w.image, 900)} alt={w.name} loading="lazy" decoding="async" /></div>
                 <div className="bd"><h3>{w.name}</h3><p>{w.text}</p></div>
               </Link>
             ))}
@@ -180,7 +181,7 @@ export default function Home() {
 
       <section className="band" aria-labelledby="fnd">
         <div className="wrap founder">
-          <figure data-reveal><img src={blogger.founderPortrait} alt="Yeye Durojaiye-Arogundade, founder of YSIDRA" loading="lazy" /></figure>
+          <figure data-reveal><img src={bimg(blogger.founderPortrait, 700)} alt="Yeye Durojaiye-Arogundade, founder of YSIDRA" loading="lazy" /></figure>
           <div data-reveal>
             <span className="pill">Founder note</span>
             <h2 id="fnd" className="sr" style={{ position: "absolute", left: -9999 }}>{founderNote.title}</h2>
@@ -198,7 +199,7 @@ export default function Home() {
           <p>{about.impact}</p>
           <div className="btn-row"><a href={site.shop} className="btn btn-o">Shop and give</a><Link href="/about" className="btn btn-ghost">Learn more</Link></div>
         </div>
-        <img src={blogger.impactPhoto} alt="Children learning in class" loading="lazy" />
+        <img src={bimg(blogger.impactPhoto, 1000)} alt="Children learning in class" loading="lazy" />
       </section>
 
       <CtaBand />

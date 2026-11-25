@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { img, waLink } from "@/lib/util";
+import { img, srcSet, waLink } from "@/lib/util";
 import { site } from "@/lib/content";
 
 // Mosaic size pattern from the current ysidra.com gallery: normal, normal, tall, wide, normal, big, normal, wide, normal.
@@ -47,16 +47,16 @@ export default function GalleryGrid({ items, filters = true, limit }) {
         {list.map((g, i) => (
           <button key={g.src + i} className={PATTERN[i % PATTERN.length]} aria-label={`Open photo: ${g.tag} work by YSIDRA`}
             onClick={(e) => { lastBtn.current = e.currentTarget; setOpen(i); }}>
-            <img src={img(g.src)} alt={`${g.tag} notebook by YSIDRA, made in Lagos`} loading="lazy" decoding="async" />
+            <img src={img(g.src, 480)} srcSet={srcSet(g.src)} sizes="(max-width: 620px) 50vw, 33vw" alt={`${g.tag} notebook by YSIDRA, made in Lagos`} loading="lazy" decoding="async" />
           </button>
         ))}
       </div>
       {it && (
         <div className="lb" role="dialog" aria-modal="true" aria-label="Photo viewer" onClick={(e) => e.target === e.currentTarget && close()}>
-          <img src={img(it.src)} alt={`${it.tag} notebook by YSIDRA`} />
+          <img src={img(it.src, 1280)} srcSet={srcSet(it.src)} sizes="94vw" alt={`${it.tag} notebook by YSIDRA`} />
           <div className="bar">
             <button className="btn btn-ghost" onClick={() => setOpen((open - 1 + list.length) % list.length)}>Previous</button>
-            <a className="btn btn-o" href={waLink(`Hello YSIDRA, I saw this in your gallery and would like something similar: ${site.url}/img/${it.src}.jpg`)}>Enquire on WhatsApp</a>
+            <a className="btn btn-o" href={waLink(`Hello YSIDRA, I saw this in your gallery and would like something similar: ${site.url}${img(it.src, 1280)}`)}>Enquire on WhatsApp</a>
             <button className="btn btn-ghost" onClick={() => setOpen((open + 1) % list.length)}>Next</button>
           </div>
           <button ref={closeBtn} className="btn btn-ghost x" onClick={close}>Close</button>
