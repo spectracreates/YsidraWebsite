@@ -1,15 +1,15 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  images: {
-    remotePatterns: [
-      { protocol: "https", hostname: "res.cloudinary.com" },
-      { protocol: "https", hostname: "*.supabase.co" },
-    ],
-    // Needed because our bundled product placeholders are SVGs. Safe here
-    // since these are our own static files, not user-uploaded/remote SVGs.
-    dangerouslyAllowSVG: true,
-    contentDispositionType: "attachment",
-    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+module.exports = {
+  reactStrictMode: true,
+  poweredByHeader: false,
+  async redirects() {
+    return [
+      { source: "/p/our-portfolio.html", destination: "/gallery", permanent: true },
+      { source: "/p/about-us.html", destination: "/about", permanent: true },
+      { source: "/books", destination: "/collections", permanent: true },
+      { source: "/books/:slug", destination: "/collections", permanent: true },
+      { source: "/cart", destination: "https://ysidra-shop.vercel.app", permanent: false },
+      { source: "/checkout", destination: "https://ysidra-shop.vercel.app", permanent: false },
+    ];
   },
 };
-module.exports = nextConfig;
