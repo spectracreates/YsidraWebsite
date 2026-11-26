@@ -1,7 +1,8 @@
 import Link from "@/components/L";
 import Pic from "@/components/Pic";
 import { PageHero, CtaBand, ClientMarquee } from "@/components/Blocks";
-import { work } from "@/lib/content";
+import { work, clientArchive } from "@/lib/content";
+import ClientCollections from "@/components/ClientCollections";
 
 export const metadata = {
   title: "Our work",
@@ -24,6 +25,12 @@ export default function Work() {
           ))}
         </div>
       </section>
+      {clientArchive.length > 0 && (
+        <section className="band white"><div className="wrap">
+          <div className="head"><div><h2>More client collections</h2><p className="lede">Tap a client to see every piece we made for them.</p></div></div>
+          <ClientCollections items={clientArchive} />
+        </div></section>
+      )}
       <CtaBand title="Your brand could be next." />
     </>
   );

@@ -6,7 +6,7 @@ import Testimonials from "@/components/Testimonials";
 import { ProductCard, CtaBand, ClientMarquee, CoverMarquee } from "@/components/Blocks";
 import { bimg } from "@/lib/util";
 import blur from "@/lib/blur.json";
-import { site, stats, heroSlides, solutions, products, finishes, workflow, work, gallery, testimonials, about, services, brandWork, signature, founderNote, blogger } from "@/lib/content";
+import { site, stats, heroSlides, solutions, products, finishes, workflow, work, gallery, testimonials, about, services, brandWork, signature, founderNote, blogger, archiveGallery } from "@/lib/content";
 
 export default function Home() {
   return (
@@ -176,7 +176,7 @@ export default function Home() {
             <div><h2 id="gal">See what is possible</h2><p className="lede">Tap any photo for a closer look.</p></div>
             <Link href="/gallery" className="btn btn-line">Full gallery</Link>
           </div>
-          <GalleryGrid items={gallery} filters={false} limit={12} />
+          <GalleryGrid items={[...gallery, ...archiveGallery]} filters={false} limit={12} />
         </div>
       </section>
 

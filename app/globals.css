@@ -390,3 +390,7 @@ html.js [data-reveal] { transform: translateY(16px); transition-duration: 0.55s;
   .marquee.covers img { height: 150px; }
 }
 @media (max-width: 760px) { .rail small { display: none; } .rail a { padding: 16px 14px; } }
+
+.ccard { border: 0; padding: 0; text-align: left; cursor: pointer; font: inherit; color: inherit; }
+.ccard:hover { transform: translateY(-4px); box-shadow: 0 24px 48px -28px rgba(27, 28, 77, 0.45); }
+.lb { grid-template-rows: 1fr auto auto; }
