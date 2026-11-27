@@ -176,7 +176,8 @@ export default function Home() {
             <div><h2 id="gal">See what is possible</h2><p className="lede">Tap any photo for a closer look.</p></div>
             <Link href="/gallery" className="btn btn-line">Full gallery</Link>
           </div>
-          <GalleryGrid items={[...gallery, ...archiveGallery]} filters={false} limit={12} />
+          {/* Only a few archive photos are sent to the home page; the full set lives on /gallery. */}
+          <GalleryGrid items={[...gallery, ...archiveGallery.slice(0, 24)]} filters={false} limit={12} />
         </div>
       </section>
 

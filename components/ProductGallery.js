@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { img, srcSet } from "@/lib/util";
+import { img, srcSet } from "@/lib/img";
 
 export default function ProductGallery({ images, name }) {
   const [cur, setCur] = useState(0);

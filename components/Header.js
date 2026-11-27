@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import Link from "@/components/L";
 import { usePathname } from "next/navigation";
-import { nav, site } from "@/lib/content";
+import { nav, site } from "@/lib/site";
 
 export default function Header() {
   const [open, setOpen] = useState(false);

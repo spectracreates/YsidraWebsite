@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
-import { quoteSteps, site, products } from "@/lib/content";
+import { site } from "@/lib/site";
 
-const STEPS = [
+const makeSteps = (quoteSteps) => [
   { key: "items", title: "What would you like made?", hint: "Choose all that apply.", multi: true, options: quoteSteps.items },
   { key: "qty", title: "How many, and by when?", hint: "A rough number is fine.", multi: false, options: quoteSteps.quantities, date: true },
   { key: "finish", title: "How should it look?", hint: "Pick the finishes you like, or let us recommend.", multi: true, options: quoteSteps.finishes },
@@ -10,7 +10,8 @@ const STEPS = [
 ];
 const EMPTY = { items: [], qty: "", when: "", finish: [], name: "", company: "", phone: "", email: "", notes: "", product: "" };
 
-export default function QuoteForm() {
+export default function QuoteForm({ quoteSteps, products = [] }) {
+  const STEPS = makeSteps(quoteSteps);
   const [st, setSt] = useState(0);
   const [q, setQ] = useState(EMPTY);
   const [err, setErr] = useState("");

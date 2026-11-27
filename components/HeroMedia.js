@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { img, srcSet } from "@/lib/util";
+import { img, srcSet } from "@/lib/img";
 
 // First photo loads immediately; each next photo is fetched only just before it is shown.
 // On slow connections (Save-Data or 2G/3G) the slideshow stays on the first photo.
