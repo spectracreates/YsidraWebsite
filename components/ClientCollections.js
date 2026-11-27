@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { bimg, waLink } from "@/lib/img";
+import { bimg, bsrcSet, waLink } from "@/lib/img";
 
 // One card per client from the Blogger photo store; tapping opens that client's photos.
 export default function ClientCollections({ items }) {
@@ -36,7 +36,7 @@ export default function ClientCollections({ items }) {
           const c = by[id];
           return (
             <button key={id} className="card ccard" onClick={(e) => { last.current = e.currentTarget; setK(0); setOpen(id); }} aria-label={`View ${c.photos.length} photos for ${c.name}`}>
-              <div className="ph wide"><img src={bimg(c.photos[0].url, 600)} alt="" loading="lazy" decoding="async" /></div>
+              <div className="ph wide"><img src={bimg(c.photos[0].url, 640)} srcSet={bsrcSet(c.photos[0].url)} sizes="(max-width: 620px) 100vw, 33vw" alt="" loading="lazy" decoding="async" /></div>
               <div className="bd"><h3>{c.name}</h3><p>{c.photos.length} {c.photos.length === 1 ? "photo" : "photos"}</p></div>
             </button>
           );
@@ -44,7 +44,7 @@ export default function ClientCollections({ items }) {
       </div>
       {g && (
         <div className="lb" role="dialog" aria-modal="true" aria-label={`${g.name} photos`} onClick={(e) => e.target === e.currentTarget && close()}>
-          <img src={bimg(g.photos[k].url, 1280)} alt={`${g.name} notebooks by YSIDRA, photo ${k + 1}`} />
+          <img src={bimg(g.photos[k].url, 1200)} srcSet={bsrcSet(g.photos[k].url, 640)} sizes="94vw" alt={`${g.name} notebooks by YSIDRA, photo ${k + 1}`} />
           <div className="bar">
             <span style={{ color: "#fff", fontFamily: "var(--display)", fontWeight: 700, alignSelf: "center" }}>{g.name} / {k + 1} of {g.photos.length}</span>
           </div>

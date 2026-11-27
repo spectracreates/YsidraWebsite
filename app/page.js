@@ -4,7 +4,7 @@ import HeroMedia from "@/components/HeroMedia";
 import GalleryGrid from "@/components/GalleryGrid";
 import Testimonials from "@/components/Testimonials";
 import { ProductCard, CtaBand, ClientMarquee, CoverMarquee } from "@/components/Blocks";
-import { bimg } from "@/lib/util";
+import { bimg, bsrcSet } from "@/lib/img";
 import blur from "@/lib/blur.json";
 import { site, stats, heroSlides, solutions, products, finishes, workflow, work, gallery, testimonials, about, services, brandWork, signature, founderNote, blogger, archiveGallery } from "@/lib/content";
 
@@ -18,7 +18,7 @@ export default function Home() {
           <p className="sub">A strategic brand and communication studio, and the maker of over two million premium notebooks since 2017</p>
           <div className="btn-row">
             <Link href="/quote" className="btn btn-o">Start a project</Link>
-            <Link href="/collections" className="btn btn-ghost">Explore collections</Link>
+            <Link href="/design-your-notebook" className="btn btn-ghost">Design your notebook</Link>
           </div>
         </div>
       </section>
@@ -97,7 +97,7 @@ export default function Home() {
           <div className="grid g4">
             {signature.map((c) => (
               <Link key={c.name} href={c.href} className="card" data-reveal>
-                <div className="ph"><img src={bimg(c.image, 600)} alt={c.name} loading="lazy" decoding="async" /></div>
+                <div className="ph"><img src={bimg(c.image, 640)} srcSet={bsrcSet(c.image)} sizes="(max-width: 620px) 100vw, (max-width: 1000px) 50vw, 25vw" alt={c.name} loading="lazy" decoding="async" /></div>
                 <div className="bd"><h3>{c.name}</h3><p>{c.text}</p><span className="tlink">View collection</span></div>
               </Link>
             ))}
@@ -111,7 +111,7 @@ export default function Home() {
           <div className="bw">
             {brandWork.map((w) => (
               <Link key={w.name} href="/quote" className="card" data-reveal>
-                <div className="ph"><img src={bimg(w.image, 900)} alt={w.name} loading="lazy" decoding="async" /></div>
+                <div className="ph"><img src={bimg(w.image, 828)} srcSet={bsrcSet(w.image)} sizes="(max-width: 860px) 100vw, 40vw" alt={w.name} loading="lazy" decoding="async" /></div>
                 <div className="bd"><h3>{w.name}</h3><p>{w.text}</p></div>
               </Link>
             ))}
@@ -183,7 +183,7 @@ export default function Home() {
 
       <section className="band" aria-labelledby="fnd">
         <div className="wrap founder">
-          <figure data-reveal><img src={bimg(blogger.founderPortrait, 700)} alt="Yeye Durojaiye-Arogundade, founder of YSIDRA" loading="lazy" /></figure>
+          <figure data-reveal><img src={bimg(blogger.founderPortrait, 640)} srcSet={bsrcSet(blogger.founderPortrait)} sizes="(max-width: 860px) 100vw, 40vw" alt="Yeye Durojaiye-Arogundade, founder of YSIDRA" loading="lazy" /></figure>
           <div data-reveal>
             <span className="pill">Founder note</span>
             <h2 id="fnd" className="sr" style={{ position: "absolute", left: -9999 }}>{founderNote.title}</h2>
@@ -201,7 +201,7 @@ export default function Home() {
           <p>{about.impact}</p>
           <div className="btn-row"><a href={site.shop} className="btn btn-o">Shop and give</a><Link href="/about" className="btn btn-ghost">Learn more</Link></div>
         </div>
-        <img src={bimg(blogger.impactPhoto, 1000)} alt="Children learning in class" loading="lazy" />
+        <img src={bimg(blogger.impactPhoto, 1080)} srcSet={bsrcSet(blogger.impactPhoto, 640)} sizes="100vw" alt="Children learning in class" loading="lazy" />
       </section>
 
       <CtaBand />

@@ -50,6 +50,7 @@ export default function Product({ params }) {
               <p style={{ color: "var(--soft)" }}>Every piece can carry your logo, names, colours and custom inside pages. Pricing depends on quantity and finish, so we quote each order.</p>
               <div className="btn-row" style={{ marginTop: 26 }}>
                 <Link href={`/quote?product=${p.id}`} className="btn btn-o">Get a quote</Link>
+                {p.category !== "merchandise" && <Link href={`/design-your-notebook?from=${p.id}`} className="btn btn-line">Design yours</Link>}
                 <a href={waLink(`Hello YSIDRA, I'm interested in the ${p.name}. ${site.url}/collections/${p.id}`)} className="btn btn-line">Ask on WhatsApp</a>
               </div>
             </div>
