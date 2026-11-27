@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { bimg, waLink } from "@/lib/util";
+import { bimg, waLink } from "@/lib/img";
 
 // One card per client from the Blogger photo store; tapping opens that client's photos.
 export default function ClientCollections({ items }) {

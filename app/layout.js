@@ -7,7 +7,9 @@ import WhatsAppFloat from "@/components/WhatsAppFloat";
 import { site, clients } from "@/lib/content";
 
 const display = Montserrat({ subsets: ["latin"], weight: ["700", "800", "900"], variable: "--font-display", display: "swap" });
-const body = Open_Sans({ subsets: ["latin"], weight: ["400", "600"], variable: "--font-body", display: "swap" });
+// Body font is not preloaded: on slow connections the page text shows in the fallback font first
+// instead of waiting for a second font file to download alongside the CSS.
+const body = Open_Sans({ subsets: ["latin"], weight: ["400", "600"], variable: "--font-body", display: "swap", preload: false });
 
 export const metadata = {
   metadataBase: new URL(site.url),

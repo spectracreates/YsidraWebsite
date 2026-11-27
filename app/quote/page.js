@@ -1,5 +1,5 @@
 import QuoteForm from "@/components/QuoteForm";
-import { site } from "@/lib/content";
+import { site, quoteSteps, products } from "@/lib/content";
 
 export const metadata = {
   title: "Get a quote",
@@ -21,7 +21,7 @@ export default function Quote() {
             <div><b>Follow</b><a href={site.instagram}>Instagram</a> <span>and</span> <a href={site.linkedin}>LinkedIn</a></div>
           </div>
         </div>
-        <QuoteForm />
+        <QuoteForm quoteSteps={quoteSteps} products={products.map((p) => ({ id: p.id, name: p.name }))} />
       </div>
     </section>
   );

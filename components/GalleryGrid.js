@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { img, srcSet, waLink, bimg } from "@/lib/util";
-import { site } from "@/lib/content";
+import { img, srcSet, waLink, bimg } from "@/lib/img";
+import { site } from "@/lib/site";
 
 // Mosaic size pattern from the current ysidra.com gallery: normal, normal, tall, wide, normal, big, normal, wide, normal.
 const PATTERN = ["", "", "t", "w", "", "b", "", "w", ""];
@@ -10,6 +10,9 @@ export default function GalleryGrid({ items, filters = true, limit }) {
   const tags = useMemo(() => ["All", ...Array.from(new Set(items.map((i) => i.tag)))], [items]);
   const [tag, setTag] = useState("All");
   const [open, setOpen] = useState(-1);
+  // Render photos in batches so the gallery page does not put hundreds of images in the page at once.
+  const STEP = 24;
+  const [shown, setShown] = useState(STEP);
   const lastBtn = useRef(null);
   const closeBtn = useRef(null);
 
@@ -17,6 +20,8 @@ export default function GalleryGrid({ items, filters = true, limit }) {
     const l = tag === "All" ? interleave(items) : items.filter((i) => i.tag === tag);
     return limit ? l.slice(0, limit) : l;
   }, [items, tag, limit]);
+  useEffect(() => { setShown(STEP); }, [tag]);
+  const visible = limit ? list : list.slice(0, shown);
 
   useEffect(() => {
     if (open < 0) return;
@@ -44,13 +49,18 @@ export default function GalleryGrid({ items, filters = true, limit }) {
         </div>
       )}
       <div className="mos">
-        {list.map((g, i) => (
+        {visible.map((g, i) => (
           <button key={(g.src || g.url) + i} className={PATTERN[i % PATTERN.length]} aria-label={`Open photo: ${g.name || g.tag} by YSIDRA`}
             onClick={(e) => { lastBtn.current = e.currentTarget; setOpen(i); }}>
             {g.url ? <img src={bimg(g.url, 600)} alt={`${g.name || g.tag} by YSIDRA, made in Lagos`} loading="lazy" decoding="async" /> : <img src={img(g.src, 480)} srcSet={srcSet(g.src)} sizes="(max-width: 620px) 50vw, 33vw" alt={`${g.tag} notebook by YSIDRA, made in Lagos`} loading="lazy" decoding="async" />}
           </button>
         ))}
       </div>
+      {visible.length < list.length && (
+        <p style={{ textAlign: "center", marginTop: 24 }}>
+          <button className="btn btn-line" onClick={() => setShown((n) => n + STEP)}>Show more photos ({list.length - visible.length} more)</button>
+        </p>
+      )}
       {it && (
         <div className="lb" role="dialog" aria-modal="true" aria-label="Photo viewer" onClick={(e) => e.target === e.currentTarget && close()}>
           {it.url ? <img src={bimg(it.url, 1280)} alt={`${it.name || it.tag} by YSIDRA`} /> : <img src={img(it.src, 1280)} srcSet={srcSet(it.src)} sizes="94vw" alt={`${it.tag} notebook by YSIDRA`} />}
