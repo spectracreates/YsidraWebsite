@@ -18,7 +18,7 @@ export default function Home() {
           <p className="sub">A strategic brand and communication studio, and the maker of over two million premium notebooks since 2017</p>
           <div className="btn-row">
             <Link href="/quote" className="btn btn-o">Start a project</Link>
-            <Link href="/collections" className="btn btn-ghost">Explore collections</Link>
+            <Link href="/design-your-notebook" className="btn btn-ghost">Design your notebook</Link>
           </div>
         </div>
       </section>
