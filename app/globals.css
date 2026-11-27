@@ -474,9 +474,12 @@ textarea.nbs-in { resize: vertical; }
 .nbs-bar { display: none; }
 @media (max-width: 960px) {
   .nbs { grid-template-columns: 1fr; }
-  .nbs-left { position: static; }
-  .nbs-stage { position: sticky; top: 64px; z-index: 5; aspect-ratio: auto; height: min(46svh, 92vw); }
+  /* Preview stays pinned while the options scroll underneath; summary moves to the end. */
+  .nbs-left { display: contents; }
+  .nbs-stage { position: sticky; top: 64px; z-index: 5; aspect-ratio: auto; height: min(44svh, 92vw); order: 0; box-shadow: inset 0 0 0 1px var(--line), 0 10px 24px -14px rgba(27, 28, 77, 0.35); }
+  .nbs-right { order: 1; }
   .nbs-sum { order: 2; }
+  body:has(.nbs) .wa { display: none; }
   .nbs-bar { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; align-items: center; justify-content: space-between; gap: 12px;
     padding: 10px var(--pad) calc(10px + env(safe-area-inset-bottom, 0px)); background: rgba(250, 246, 238, 0.96); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 -8px 24px rgba(27, 28, 77, 0.08); font: 600 13px var(--display); color: var(--soft); }
   .nbs-bar .btn { min-height: 46px; padding: 0 22px; }

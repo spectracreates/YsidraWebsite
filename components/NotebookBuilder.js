@@ -495,6 +495,7 @@ function Cover({ c, size, mat, logo, art, side, svgRef }) {
       {c.material === "leather" && (
         <rect x={bx + (back ? 11 : 22)} y={by + 11} width={W - 33} height={H - 22} rx={r - 4} fill="none" stroke="#f1e2c6" strokeOpacity=".55" strokeWidth="1.6" strokeDasharray="7 6" />
       )}
+      {!back && c.material === "ankara" && (c.line1 || c.line2 || logo) && <Patch c={c} W={W} H={H} bx={bx} by={by} />}
       {!back && <Ink p={p} c={c} logo={logo} W={W} H={H} bx={bx} by={by} />}
       {c.elastic && (
         <g>
@@ -503,6 +504,21 @@ function Cover({ c, size, mat, logo, art, side, svgRef }) {
         </g>
       )}
     </svg>
+  );
+}
+
+// Ankara covers carry the branding on a stitched leather label, as the handmade journals do.
+function Patch({ c, W, H, bx, by }) {
+  const k = c.scale / 70;
+  const pw = W * 0.66 * Math.min(1.15, k), ph = H * 0.34 * Math.min(1.15, k);
+  const cx = { centre: bx + W * 0.54, upper: bx + W * 0.54, bc: bx + W * 0.54, br: bx + W * 0.86 - pw / 2 + W * 0.04 }[c.position];
+  const cy = { centre: by + H * 0.46, upper: by + H * 0.27, bc: by + H * 0.86 - ph / 2 + H * 0.04, br: by + H * 0.88 - ph / 2 + H * 0.04 }[c.position];
+  return (
+    <g>
+      <rect x={cx - pw / 2} y={cy - ph / 2} width={pw} height={ph} rx="8" fill="#3a2414" />
+      <rect x={cx - pw / 2} y={cy - ph / 2} width={pw} height={ph} rx="8" fill="#000" opacity=".15" />
+      <rect x={cx - pw / 2 + 6} y={cy - ph / 2 + 6} width={pw - 12} height={ph - 12} rx="5" fill="none" stroke="#e9d6b4" strokeOpacity=".6" strokeWidth="1.2" strokeDasharray="5 4" />
+    </g>
   );
 }
 
@@ -589,13 +605,24 @@ function Inside({ c, size, mat, logo, svgRef }) {
       <rect x={R} y={y0} width={w} height={ph} fill={paper} />
       <Ruling kind={c.pages} x={R} y={y0} w={w} h={ph} ink={ink} solid={solid} />
       {c.branded && (logo
-        ? <image href={logo.src} x={R + w / 2 - 14} y={y0 + ph - 22} width="28" height="14" preserveAspectRatio="xMidYMid meet" opacity=".75" />
+        ? <Mark src={logo.mask} id={`${p}fm`} x={R + w / 2 - 16} y={y0 + ph - 22} w={32} h={14} fill={solid} opacity={0.8} />
         : <text x={R + w / 2} y={y0 + ph - 11} textAnchor="middle" fill={solid} opacity=".8" style={{ fontFamily: "Montserrat, Arial, sans-serif", fontWeight: 700, fontSize: 7, letterSpacing: "0.14em" }}>{(c.line1 || "YOUR BRAND").toUpperCase()}</text>)}
       {c.ribbons > 0 && Array.from({ length: c.ribbons }).map((_, i) => (
         <path key={i} d={`M${R + w * 0.38 + i * 12},${y0} v${ph + 30 + i * 6} l-4,-7 l-4,7 V${y0} Z`} fill={c.ribbonColour} opacity=".95" />
       ))}
       <rect x={x0} y={y0} width={2 * w} height={ph} fill="url(#igut)" />
     </svg>
+  );
+}
+
+function Mark({ src, id, x, y, w, h, fill, opacity = 1 }) {
+  return (
+    <g opacity={opacity}>
+      <mask id={id} maskUnits="userSpaceOnUse" x={x} y={y} width={w} height={h}>
+        <image href={src} x={x} y={y} width={w} height={h} preserveAspectRatio="xMidYMid meet" />
+      </mask>
+      <rect x={x} y={y} width={w} height={h} fill={fill} mask={`url(#${id})`} />
+    </g>
   );
 }
 
@@ -617,7 +644,7 @@ function EndSheet({ c, x, y, w, h, paper, solid, logo, p }) {
       <rect x={x} y={y} width={w} height={h} fill={fill} />
       {c.material === "ankara" && <rect x={x + w * 0.12} y={y + h * 0.08} width={w * 0.76} height={h * 0.84} fill="#1b1c4d" opacity=".82" rx="4" />}
       {logo
-        ? <image href={logo.src} x={x + w / 2 - w * 0.22} y={y + h * 0.12} width={w * 0.44} height={h * 0.12} preserveAspectRatio="xMidYMid meet" />
+        ? <Mark src={logo.mask} id={`${p}em`} x={x + w / 2 - w * 0.22} y={y + h * 0.12} w={w * 0.44} h={h * 0.12} fill={fg} />
         : <text x={x + w / 2} y={y + h * 0.2} textAnchor="middle" fill={fg} style={{ fontFamily: "Montserrat, Arial, sans-serif", fontWeight: 800, fontSize: Math.min(20, w * 0.075), letterSpacing: "0.06em" }}>{c.line1 || "YOUR BRAND"}</text>}
       {c.endsheets === "qr" && (
         <g>
