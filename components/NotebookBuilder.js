@@ -406,8 +406,17 @@ function Mockup({ c, logo, art, inkRef }) {
     }, 30);
     return () => { off = true; clearTimeout(t); };
   }, [c, logo, art, kind, inkRef]);
+  // Once the first cover is on screen, fetch the other mockup quietly so switching cover type is instant.
+  useEffect(() => {
+    if (!drawn) return;
+    const other = MOCKS[kind === "folio" ? "hardcover" : "folio"];
+    const go = () => ["shade.jpg", "light.jpg", kind === "folio" ? "base.webp" : "mask.webp"].forEach((f) => cached(`${other.src}-${f}`).catch(() => {}));
+    const id = "requestIdleCallback" in window ? requestIdleCallback(go, { timeout: 4000 }) : setTimeout(go, 2500);
+    return () => ("cancelIdleCallback" in window ? cancelIdleCallback(id) : clearTimeout(id));
+  }, [drawn, kind]);
   return (
     <div className={`mk mk-${kind}${drawn ? " on" : ""}`}>
+      {!drawn && <p className="mk-wait">Loading your notebook…</p>}
       <canvas ref={cv} width={m.w} height={m.h} role="img" aria-label={`Your notebook: ${kind === "folio" ? "leatherette folio" : "hardcover"} in your colour, with your branding`} />
       <div className="mk-src" aria-hidden="true">
         {kind === "folio" ? (
