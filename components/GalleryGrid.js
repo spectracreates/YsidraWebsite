@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { img, srcSet, waLink, bimg } from "@/lib/img";
+import { img, srcSet, waLink, bimg, bsrcSet } from "@/lib/img";
 import { site } from "@/lib/site";
 
 // Mosaic size pattern from the current ysidra.com gallery: normal, normal, tall, wide, normal, big, normal, wide, normal.
@@ -52,7 +52,7 @@ export default function GalleryGrid({ items, filters = true, limit }) {
         {visible.map((g, i) => (
           <button key={(g.src || g.url) + i} className={PATTERN[i % PATTERN.length]} aria-label={`Open photo: ${g.name || g.tag} by YSIDRA`}
             onClick={(e) => { lastBtn.current = e.currentTarget; setOpen(i); }}>
-            {g.url ? <img src={bimg(g.url, 600)} alt={`${g.name || g.tag} by YSIDRA, made in Lagos`} loading="lazy" decoding="async" /> : <img src={img(g.src, 480)} srcSet={srcSet(g.src)} sizes="(max-width: 620px) 50vw, 33vw" alt={`${g.tag} notebook by YSIDRA, made in Lagos`} loading="lazy" decoding="async" />}
+            {g.url ? <img src={bimg(g.url, 640)} srcSet={bsrcSet(g.url)} sizes="(max-width: 620px) 50vw, 33vw" alt={`${g.name || g.tag} by YSIDRA, made in Lagos`} loading="lazy" decoding="async" /> : <img src={img(g.src, 480)} srcSet={srcSet(g.src)} sizes="(max-width: 620px) 50vw, 33vw" alt={`${g.tag} notebook by YSIDRA, made in Lagos`} loading="lazy" decoding="async" />}
           </button>
         ))}
       </div>
@@ -63,11 +63,11 @@ export default function GalleryGrid({ items, filters = true, limit }) {
       )}
       {it && (
         <div className="lb" role="dialog" aria-modal="true" aria-label="Photo viewer" onClick={(e) => e.target === e.currentTarget && close()}>
-          {it.url ? <img src={bimg(it.url, 1280)} alt={`${it.name || it.tag} by YSIDRA`} /> : <img src={img(it.src, 1280)} srcSet={srcSet(it.src)} sizes="94vw" alt={`${it.tag} notebook by YSIDRA`} />}
+          {it.url ? <img src={bimg(it.url, 1200)} srcSet={bsrcSet(it.url, 640)} sizes="94vw" alt={`${it.name || it.tag} by YSIDRA`} /> : <img src={img(it.src, 1280)} srcSet={srcSet(it.src)} sizes="94vw" alt={`${it.tag} notebook by YSIDRA`} />}
           {it.name && <p style={{ color: "#fff", marginTop: 10, fontFamily: "var(--display)", fontWeight: 700 }}>{it.name}</p>}
           <div className="bar">
             <button className="btn btn-ghost" onClick={() => setOpen((open - 1 + list.length) % list.length)}>Previous</button>
-            <a className="btn btn-o" href={waLink(`Hello YSIDRA, I saw this in your gallery and would like something similar: ${it.url ? bimg(it.url, 1280) : site.url + img(it.src, 1280)}`)}>Enquire on WhatsApp</a>
+            <a className="btn btn-o" href={waLink(`Hello YSIDRA, I saw this in your gallery and would like something similar: ${site.url}${it.url ? bimg(it.url, 1200) : img(it.src, 1280)}`)}>Enquire on WhatsApp</a>
             <button className="btn btn-ghost" onClick={() => setOpen((open + 1) % list.length)}>Next</button>
           </div>
           <button ref={closeBtn} className="btn btn-ghost x" onClick={close}>Close</button>

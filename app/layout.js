@@ -44,9 +44,6 @@ const ld = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en-NG" className={`${display.variable} ${body.variable}`}>
-      <head>
-        <link rel="preconnect" href="https://blogger.googleusercontent.com" crossOrigin="" />
-      </head>
       <body>
         <a className="skip" href="#main">Skip to content</a>
         <Header />

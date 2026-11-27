@@ -403,11 +403,14 @@ html.js [data-reveal] { transform: translateY(16px); transition-duration: 0.55s;
 .nbs-left { position: sticky; top: 92px; display: grid; gap: 18px; }
 .nbs-stage { position: relative; aspect-ratio: 1 / 1; border-radius: 18px; overflow: hidden; perspective: 1400px;
   background: radial-gradient(120% 90% at 50% 35%, #fffdf8 0%, #f3ecdc 62%, #e8dcc3 100%); box-shadow: inset 0 0 0 1px var(--line); }
-.nbs-book { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform 0.7s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.3s; }
+.nbs-book { position: absolute; inset: 0; transition: transform 0.7s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.3s; }
 .nbs-stage:hover .nbs-book { transition: transform 0.35s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.3s; }
-.nbs-book .face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
-.nbs-book .face.back { transform: rotateY(180deg); }
-.nbs-book .face svg, .nbs-inside svg { width: 100%; height: 100%; display: block; }
+.nbs-inside svg { width: 100%; height: 100%; display: block; }
+.mk { position: absolute; inset: 5% 6% 15%; display: grid; place-items: center; }
+.mk canvas { max-width: 100%; max-height: 100%; width: auto; height: auto; opacity: 0; transition: opacity 0.4s cubic-bezier(0.23, 1, 0.32, 1); }
+.mk.on canvas { opacity: 1; }
+.mk-folio canvas { filter: drop-shadow(12px 18px 18px rgba(27, 28, 77, 0.32)); }
+.mk-src { position: absolute; width: 0; height: 0; overflow: hidden; visibility: hidden; }
 .nbs-book.hide { opacity: 0; pointer-events: none; }
 .nbs-inside { position: absolute; inset: 0; opacity: 0; transform: scale(0.96); transition: opacity 0.35s cubic-bezier(0.23, 1, 0.32, 1), transform 0.35s cubic-bezier(0.23, 1, 0.32, 1); pointer-events: none; }
 .nbs-inside.show { opacity: 1; transform: none; }

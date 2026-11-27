@@ -55,7 +55,7 @@ export function CtaBand({ title = "Let's make something worth keeping.", text = 
 }
 
 export function ClientMarquee({ title = "Trusted by" }) {
-  const row = blogger.logos.map((u, i) => (<img key={i} src={bimg(u, 400)} alt="" loading="lazy" decoding="async" height="62" />));
+  const row = blogger.logos.map((u, i) => (<img key={i} src={bimg(u, 256)} alt="" loading="lazy" decoding="async" height="62" />));
   return (
     <div className="logowall">
       <p className="logowall-t">{title}</p>

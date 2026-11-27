@@ -25,7 +25,6 @@ export default function NotebookBuilder() {
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const frontRef = useRef(null);
   const insideRef = useRef(null);
-  const backRef = useRef(null);
   const ready = useRef(false);
 
   // Start from a shared link (#d=...) or a product page (?from=product-id).
@@ -61,7 +60,7 @@ export default function NotebookBuilder() {
       return n;
     });
     if (INSIDE_VIEWS.has(k)) setView("inside");
-    else if (COVER_VIEWS.has(k) && view !== "back") setView("front");
+    else if (COVER_VIEWS.has(k)) setView("front");
   };
   const pickType = (t) => { setC((o) => ({ ...o, ...PRESETS[t], type: t })); setView("front"); };
 
@@ -92,7 +91,8 @@ export default function NotebookBuilder() {
   async function downloadSheet() {
     setBusy("Preparing your design sheet…");
     try {
-      const [f, i, b] = await Promise.all([frontRef, insideRef, backRef].map((r) => svgImage(r.current)));
+      const cover = await renderMockup(c, frontRef.current);
+      const inside = await svgImage(insideRef.current);
       const W = 2000, H = 1240;
       const cv = document.createElement("canvas");
       cv.width = W; cv.height = H;
@@ -104,17 +104,14 @@ export default function NotebookBuilder() {
       const body = getComputedStyle(document.documentElement).getPropertyValue("--font-body") || "Open Sans";
       g.fillStyle = "#fff"; g.font = `800 44px ${disp}, Arial, sans-serif`;
       g.fillText("YSIDRA  ·  My notebook design", 60, 76);
-      g.drawImage(f, 30, 140, 640, 640);
-      g.drawImage(i, 660, 140, 640, 640);
-      g.drawImage(b, 1290, 140, 640, 640);
-      g.fillStyle = "#545a78"; g.font = `600 22px ${disp}, Arial, sans-serif`;
-      [["Front", 330], ["Inside", 960], ["Back", 1590]].forEach(([t, x]) => { g.textAlign = "center"; g.fillText(t, x, 800); });
+      const k = Math.min(1100 / cover.width, 700 / cover.height);
+      g.drawImage(cover, 40 + (1100 - cover.width * k) / 2, 150, cover.width * k, cover.height * k);
+      g.drawImage(inside, 1220, 150, 700, 700);
       g.textAlign = "left";
-      g.fillStyle = "#1c2240"; g.font = `400 24px ${body}, Arial, sans-serif`;
       const cols = [summary.slice(0, Math.ceil(summary.length / 2)), summary.slice(Math.ceil(summary.length / 2))];
-      cols.forEach((col, ci) => col.forEach(([k, v], ri) => {
-        g.font = `700 22px ${disp}, Arial, sans-serif`; g.fillStyle = "#2f3080"; g.fillText(k, 60 + ci * 960, 870 + ri * 40);
-        g.font = `400 22px ${body}, Arial, sans-serif`; g.fillStyle = "#1c2240"; g.fillText(trim(v, 60), 300 + ci * 960, 870 + ri * 40);
+      cols.forEach((col, ci) => col.forEach(([kk, v], ri) => {
+        g.font = `700 22px ${disp}, Arial, sans-serif`; g.fillStyle = "#2f3080"; g.fillText(kk, 60 + ci * 960, 900 + ri * 40);
+        g.font = `400 22px ${body}, Arial, sans-serif`; g.fillStyle = "#1c2240"; g.fillText(trim(v, 60), 300 + ci * 960, 900 + ri * 40);
       }));
       g.fillStyle = "#545a78"; g.font = `400 20px ${body}, Arial, sans-serif`;
       g.fillText(`Preview only: colours and foil are shown digitally. We confirm with a proof before production.  ${site.url}  ·  ${site.phone}`, 60, H - 40);
@@ -150,21 +147,20 @@ export default function NotebookBuilder() {
     setTilt({ x: ((e.clientX - r.left) / r.width - 0.5) * 16, y: -((e.clientY - r.top) / r.height - 0.5) * 10 });
   }
 
-  const art3d = { transform: `rotateY(${tilt.x + (view === "back" ? 180 : 0)}deg) rotateX(${tilt.y}deg)` };
+  const art3d = { transform: `rotateY(${tilt.x * 0.5}deg) rotateX(${tilt.y * 0.5}deg)` };
 
   return (
     <div className="nbs">
       <div className="nbs-left">
         <div className="nbs-stage" onPointerMove={onMove} onPointerLeave={() => setTilt({ x: 0, y: 0 })}>
           <div className={`nbs-book${view === "inside" ? " hide" : ""}`} style={art3d}>
-            <div className="face"><Cover c={c} size={size} mat={mat} logo={logo} art={art} side="front" svgRef={frontRef} /></div>
-            <div className="face back"><Cover c={c} size={size} mat={mat} logo={logo} art={art} side="back" svgRef={backRef} /></div>
+            <Mockup c={c} logo={logo} art={art} inkRef={frontRef} />
           </div>
           <div className={`nbs-inside${view === "inside" ? " show" : ""}`} aria-hidden={view !== "inside"}>
             <Inside c={c} size={size} mat={mat} logo={logo} svgRef={insideRef} />
           </div>
           <div className="nbs-views" role="group" aria-label="Preview">
-            {[["front", "Front"], ["inside", "Inside"], ["back", "Back"]].map(([id, t]) => (
+            {[["front", "Cover"], ["inside", "Inside"]].map(([id, t]) => (
               <button key={id} className="chip" aria-pressed={view === id} onClick={() => setView(id)}>{t}</button>
             ))}
           </div>
@@ -369,6 +365,161 @@ function Drop({ accept, onFile, text }) {
   );
 }
 
+/* ---------- photo mockups ----------
+   Real YSIDRA product photos, cleaned of client branding and split into layers:
+   folio  (leatherette / leather): colour through the book's silhouette, then the photo's own
+          shadows (multiply) and highlights (screen), so any colour keeps the real grain.
+   hardcover (printed / linen / ankara): the cover face is drawn flat and mapped onto the
+          photographed book in perspective, then lit by the same two layers. */
+const MOCKS = {
+  folio: { w: 680, h: 984, src: "/img/mock/folio" },
+  hardcover: { w: 1100, h: 801, src: "/img/mock/hardcover", face: { w: 600, h: 860 },
+    quad: [[266.4, 63.3], [735.3, 21.7], [895.1, 695.6], [399.6, 746.2]] },
+};
+const mockFor = (material) => (material === "pu" || material === "leather" ? "folio" : "hardcover");
+
+// Where the branding goes on the folio: the panel left of the strap flap, above or below the strap.
+function folioBox(position) {
+  const m = MOCKS.folio;
+  const low = position === "bc" || position === "br";
+  return low
+    ? { bx: m.w * 0.06, by: m.h * 0.56, W: m.w * 0.5, H: m.h * 0.36, pos: position === "br" ? "br" : "bc" }
+    : { bx: m.w * 0.06, by: m.h * 0.05, W: m.w * 0.5, H: m.h * 0.38, pos: position === "upper" ? "upper" : "centre" };
+}
+
+function Mockup({ c, logo, art, inkRef }) {
+  const kind = mockFor(c.material);
+  const m = MOCKS[kind];
+  const cv = useRef(null);
+  const [drawn, setDrawn] = useState(false);
+  const solid = c.material === "ankara" ? { sun: "#1f2a6b", indigo: "#22306c", kente: "#1d6b3a" }[c.ankara] : c.colour;
+  useEffect(() => {
+    let off = false;
+    const t = setTimeout(async () => {
+      try {
+        const out = await renderMockup(c, inkRef.current);
+        if (off || !cv.current) return;
+        cv.current.width = out.width; cv.current.height = out.height;
+        cv.current.getContext("2d").drawImage(out, 0, 0);
+        setDrawn(true);
+      } catch (e) { /* keep the last good frame */ }
+    }, 30);
+    return () => { off = true; clearTimeout(t); };
+  }, [c, logo, art, kind, inkRef]);
+  return (
+    <div className={`mk mk-${kind}${drawn ? " on" : ""}`}>
+      <canvas ref={cv} width={m.w} height={m.h} role="img" aria-label={`Your notebook: ${kind === "folio" ? "leatherette folio" : "hardcover"} in your colour, with your branding`} />
+      <div className="mk-src" aria-hidden="true">
+        {kind === "folio" ? (
+          <svg ref={inkRef} viewBox={`0 0 ${m.w} ${m.h}`} width={m.w} height={m.h} xmlns="http://www.w3.org/2000/svg">
+            <Defs p="f" c={c} />
+            <Ink p="f" c={c} logo={logo} {...folioBox(c.position)} />
+          </svg>
+        ) : (
+          <svg ref={inkRef} viewBox={`0 0 ${m.face.w} ${m.face.h}`} width={m.face.w} height={m.face.h} xmlns="http://www.w3.org/2000/svg">
+            <Face c={c} logo={logo} art={art} w={m.face.w} h={m.face.h} solid={solid} />
+          </svg>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// The flat front of a hardcover: material, own artwork, elastic and the branding.
+function Face({ c, logo, art, w, h, solid }) {
+  const p = "h";
+  const fill = c.material === "ankara" ? `url(#${p}ank-${c.ankara})` : c.colour;
+  const elastic = c.elastic === "match" ? shade(solid, -28) : c.elastic;
+  return (
+    <>
+      <Defs p={p} c={c} />
+      <rect width={w} height={h} fill={fill} />
+      {c.material === "linen" && <rect width={w} height={h} fill={`url(#${p}linen)`} />}
+      {c.material === "printed" && art && <image href={art.src} width={w} height={h} preserveAspectRatio="xMidYMid slice" />}
+      {c.material === "ankara" && (c.line1 || c.line2 || logo) && <Patch c={c} W={w} H={h} bx={0} by={0} />}
+      <Ink p={p} c={c} logo={logo} W={w} H={h} bx={0} by={0} />
+      {c.elastic && (
+        <g>
+          <rect x={w - 58} y="0" width="22" height={h} fill={elastic} />
+          <rect x={w - 58} y="0" width="22" height={h} fill={`url(#${p}band)`} />
+        </g>
+      )}
+    </>
+  );
+}
+
+// Homography from the rectangle (0,0)-(w,h) to a quad [TL, TR, BR, BL] (Heckbert), as CSS and as a point map.
+function homography(w, h, q) {
+  const [[x0, y0], [x1, y1], [x2, y2], [x3, y3]] = q;
+  const dx1 = x1 - x2, dx2 = x3 - x2, dx3 = x0 - x1 + x2 - x3, dy1 = y1 - y2, dy2 = y3 - y2, dy3 = y0 - y1 + y2 - y3;
+  const den = dx1 * dy2 - dx2 * dy1;
+  const g = (dx3 * dy2 - dx2 * dy3) / den, hh = (dx1 * dy3 - dx3 * dy1) / den;
+  const a = x1 - x0 + g * x1, b = x3 - x0 + hh * x3, d = y1 - y0 + g * y1, e = y3 - y0 + hh * y3;
+  return { a: a / w, b: b / h, c: x0, d: d / w, e: e / h, f: y0, g: g / w, h: hh / h };
+}
+function mapPt(m, x, y) {
+  const z = m.g * x + m.h * y + 1;
+  return [(m.a * x + m.b * y + m.c) / z, (m.d * x + m.e * y + m.f) / z];
+}
+
+// Same layers, flattened to a canvas for the design sheet.
+const IMGS = new Map();
+const cached = (src) => { if (!IMGS.has(src)) IMGS.set(src, loadImg(src).catch((e) => { IMGS.delete(src); throw e; })); return IMGS.get(src); };
+
+async function renderMockup(c, inkSvg) {
+  const kind = mockFor(c.material);
+  const m = MOCKS[kind];
+  const cv = document.createElement("canvas");
+  cv.width = m.w; cv.height = m.h;
+  const g = cv.getContext("2d");
+  const [shadeImg, lightImg, cut, ink] = await Promise.all([
+    cached(`${m.src}-shade.jpg`), cached(`${m.src}-light.jpg`),
+    cached(kind === "folio" ? `${m.src}-mask.webp` : `${m.src}-base.webp`), svgImage(inkSvg),
+  ]);
+  if (kind === "folio") {
+    g.fillStyle = c.colour; g.fillRect(0, 0, m.w, m.h);
+    g.drawImage(ink, 0, 0, m.w, m.h);
+  } else {
+    g.drawImage(cut, 0, 0, m.w, m.h);
+    drawWarped(g, ink, m.face.w, m.face.h, homography(m.face.w, m.face.h, m.quad));
+  }
+  g.globalCompositeOperation = "multiply"; g.drawImage(shadeImg, 0, 0, m.w, m.h);
+  g.globalCompositeOperation = "screen"; g.drawImage(lightImg, 0, 0, m.w, m.h);
+  g.globalCompositeOperation = "destination-in"; g.drawImage(cut, 0, 0, m.w, m.h); // back to the book's own outline
+  g.globalCompositeOperation = "source-over";
+  return cv;
+}
+
+// Perspective-draw an image by splitting it into small triangles, each drawn with an affine transform.
+function drawWarped(g, img, w, h, m, n = 24) {
+  const sx = img.width / w, sy = img.height / h;
+  for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
+    const u0 = (w * i) / n, u1 = (w * (i + 1)) / n, v0 = (h * j) / n, v1 = (h * (j + 1)) / n;
+    const P = [[u0, v0], [u1, v0], [u1, v1], [u0, v1]];
+    const D = P.map(([x, y]) => mapPt(m, x, y));
+    [[0, 1, 2], [0, 2, 3]].forEach((tri) => {
+      const s = tri.map((k) => P[k]), d = tri.map((k) => D[k]);
+      g.save();
+      g.beginPath();
+      const cx = (d[0][0] + d[1][0] + d[2][0]) / 3, cy = (d[0][1] + d[1][1] + d[2][1]) / 3;
+      d.forEach(([x, y], q) => { const ex = x + (x - cx) * 0.04, ey = y + (y - cy) * 0.04; q ? g.lineTo(ex, ey) : g.moveTo(ex, ey); });
+      g.closePath(); g.clip();
+      const [[x0, y0], [x1, y1], [x2, y2]] = s, [[X0, Y0], [X1, Y1], [X2, Y2]] = d;
+      const den = x0 * (y1 - y2) + x1 * (y2 - y0) + x2 * (y0 - y1);
+      const A = (X0 * (y1 - y2) + X1 * (y2 - y0) + X2 * (y0 - y1)) / den;
+      const B = (X0 * (x2 - x1) + X1 * (x0 - x2) + X2 * (x1 - x0)) / den;
+      const C = (X0 * (x1 * y2 - x2 * y1) + X1 * (x2 * y0 - x0 * y2) + X2 * (x0 * y1 - x1 * y0)) / den;
+      const D2 = (Y0 * (y1 - y2) + Y1 * (y2 - y0) + Y2 * (y0 - y1)) / den;
+      const E = (Y0 * (x2 - x1) + Y1 * (x0 - x2) + Y2 * (x1 - x0)) / den;
+      const F = (Y0 * (x1 * y2 - x2 * y1) + Y1 * (x2 * y0 - x0 * y2) + Y2 * (x0 * y1 - x1 * y0)) / den;
+      g.setTransform(A / sx, D2 / sx, B / sy, E / sy, C, F);
+      g.drawImage(img, 0, 0);
+      g.restore();
+    });
+  }
+  g.setTransform(1, 0, 0, 1, 0, 0);
+}
+
 /* ---------- drawing ---------- */
 function geometry(size) {
   const H = 470 * (size.h / 297) + 40;
@@ -443,76 +594,13 @@ function Ankara({ p }) {
   );
 }
 
-function coverPath(x, y, W, H, r, spineRight) {
-  return spineRight
-    ? `M${x + W},${y} H${x + r} A${r},${r} 0 0 0 ${x},${y + r} V${y + H - r} A${r},${r} 0 0 0 ${x + r},${y + H} H${x + W} Z`
-    : `M${x},${y} H${x + W - r} A${r},${r} 0 0 1 ${x + W},${y + r} V${y + H - r} A${r},${r} 0 0 1 ${x + W - r},${y + H} H${x} Z`;
-}
-
-function Cover({ c, size, mat, logo, art, side, svgRef }) {
-  const p = side === "front" ? "f" : "b";
-  const { W, H, bx, by } = geometry(size);
-  const back = side === "back";
-  const r = c.material === "leather" ? 12 : c.material === "ankara" ? 8 : 6;
-  const base = c.material === "ankara" ? `url(#${p}ank-${c.ankara})` : c.colour;
-  const solid = c.material === "ankara" ? { sun: "#1f2a6b", indigo: "#22306c", kente: "#1d6b3a" }[c.ankara] : c.colour;
-  const elastic = c.elastic === "match" ? shade(solid, -28) : c.elastic;
-  const edge = c.edges === "gold" ? `url(#${p}gold)` : c.edges === "silver" ? `url(#${p}silver)` : c.edges === "match" ? shade(solid, -10) : `url(#${p}pages)`;
-  const thick = 2 + c.count / 80;
-  const noise = { leather: 0.3, pu: 0.14, linen: 0.12, ankara: 0.08, printed: 0.04 }[c.material] || 0.1;
-  const d = coverPath(bx, by, W, H, r, back);
-  const ex = back ? bx + W * 0.09 : bx + W - W * 0.09 - 13; // elastic sits near the fore-edge
-  return (
-    <svg ref={svgRef} viewBox={`0 0 ${STAGE} ${STAGE}`} xmlns="http://www.w3.org/2000/svg" role="img"
-      aria-label={`${side === "front" ? "Front" : "Back"} of your ${size.label} ${mat.label.toLowerCase()} notebook`}>
-      <Defs p={p} c={c} />
-      <ellipse cx={STAGE / 2} cy={by + H + 16} rx={W * 0.55} ry="13" fill="#1b1c4d" opacity=".28" filter={`url(#${p}blur)`} />
-      {/* ribbons hang from the bottom, under the cover */}
-      {Array.from({ length: c.ribbons }).map((_, i) => {
-        const x = back ? bx + W - W * 0.24 - i * 15 : bx + W * 0.22 + i * 15;
-        const len = 46 + i * 8;
-        return <path key={i} d={`M${x},${by + H - 8} h10 v${len} l-5,-8 l-5,8 Z`} fill={c.ribbonColour} stroke={shade(c.ribbonColour, -25)} strokeWidth=".6" />;
-      })}
-      {/* page block peeking out at the fore-edge and bottom */}
-      <rect x={back ? bx - thick : bx + 2} y={by + 3} width={W} height={H - 1 + thick * 0.6} rx="4" fill={edge} />
-      {c.penLoop && <rect x={back ? bx - 13 : bx + W - 2} y={by + H * 0.2} width="15" height="50" rx="6" fill={elastic || shade(solid, -30)} />}
-      <g filter={`url(#${p}sh)`}>
-        <path d={d} fill={base} />
-        {c.material === "printed" && art && !back && (
-          <g clipPath={`url(#${p}clip)`}>
-            <clipPath id={`${p}clip`}><path d={d} /></clipPath>
-            <image href={art.src} x={bx} y={by} width={W} height={H} preserveAspectRatio="xMidYMid slice" />
-          </g>
-        )}
-      </g>
-      <g clipPath={`url(#${p}clip2)`}>
-        <clipPath id={`${p}clip2`}><path d={d} /></clipPath>
-        {c.material === "linen" && <rect x={bx} y={by} width={W} height={H} fill={`url(#${p}linen)`} />}
-        <rect x={bx} y={by} width={W} height={H} filter={`url(#${p}nz)`} opacity={noise} style={{ mixBlendMode: "multiply" }} />
-        <rect x={bx} y={by} width={W} height={H} fill={`url(#${p}vig)`} />
-        <rect x={bx} y={by} width={W} height={H} fill={`url(#${p}spine)`} transform={back ? `translate(${2 * bx + W},0) scale(-1,1)` : undefined} />
-      </g>
-      {c.material === "leather" && (
-        <rect x={bx + (back ? 11 : 22)} y={by + 11} width={W - 33} height={H - 22} rx={r - 4} fill="none" stroke="#f1e2c6" strokeOpacity=".55" strokeWidth="1.6" strokeDasharray="7 6" />
-      )}
-      {!back && c.material === "ankara" && (c.line1 || c.line2 || logo) && <Patch c={c} W={W} H={H} bx={bx} by={by} />}
-      {!back && <Ink p={p} c={c} logo={logo} W={W} H={H} bx={bx} by={by} />}
-      {c.elastic && (
-        <g>
-          <rect x={ex} y={by - 2} width="13" height={H + 4} fill={elastic} />
-          <rect x={ex} y={by - 2} width="13" height={H + 4} fill={`url(#${p}band)`} />
-        </g>
-      )}
-    </svg>
-  );
-}
-
 // Ankara covers carry the branding on a stitched leather label, as the handmade journals do.
-function Patch({ c, W, H, bx, by }) {
+function Patch({ c, W, H, bx, by, pos }) {
+  const position = pos || c.position;
   const k = c.scale / 70;
   const pw = W * 0.66 * Math.min(1.15, k), ph = H * 0.34 * Math.min(1.15, k);
-  const cx = { centre: bx + W * 0.54, upper: bx + W * 0.54, bc: bx + W * 0.54, br: bx + W * 0.86 - pw / 2 + W * 0.04 }[c.position];
-  const cy = { centre: by + H * 0.46, upper: by + H * 0.27, bc: by + H * 0.86 - ph / 2 + H * 0.04, br: by + H * 0.88 - ph / 2 + H * 0.04 }[c.position];
+  const cx = { centre: bx + W * 0.54, upper: bx + W * 0.54, bc: bx + W * 0.54, br: bx + W * 0.86 - pw / 2 + W * 0.04 }[position];
+  const cy = { centre: by + H * 0.46, upper: by + H * 0.27, bc: by + H * 0.86 - ph / 2 + H * 0.04, br: by + H * 0.88 - ph / 2 + H * 0.04 }[position];
   return (
     <g>
       <rect x={cx - pw / 2} y={cy - ph / 2} width={pw} height={ph} rx="8" fill="#3a2414" />
@@ -523,7 +611,8 @@ function Patch({ c, W, H, bx, by }) {
 }
 
 // Logo and text, finished as foil, deboss, print or engraving.
-function Ink({ p, c, logo, W, H, bx, by }) {
+function Ink({ p, c, logo, W, H, bx, by, pos }) {
+  const position = pos || c.position;
   const font = FONTS.find((f) => f.id === c.font) || FONTS[0];
   const k = c.scale / 70;
   const maxW = W * 0.56 * k;
@@ -538,10 +627,10 @@ function Ink({ p, c, logo, W, H, bx, by }) {
   if (c.line1) { parts.push({ t: "l1", y: h + f1 * 0.82 }); h += f1 + (c.line2 ? gap * 0.6 : 0); }
   if (c.line2) { parts.push({ t: "l2", y: h + f2 * 0.82 }); h += f2; }
   if (!parts.length) return null;
-  const cx = { centre: bx + W * 0.54, upper: bx + W * 0.54, bc: bx + W * 0.54, br: bx + W * 0.86 }[c.position];
-  const top = { centre: by + H * 0.46 - h / 2, upper: by + H * 0.27 - h / 2, bc: by + H * 0.86 - h, br: by + H * 0.88 - h }[c.position];
-  const anchor = c.position === "br" ? "end" : "middle";
-  const lx = c.position === "br" ? cx - logoW : cx - logoW / 2;
+  const cx = { centre: bx + W * 0.54, upper: bx + W * 0.54, bc: bx + W * 0.54, br: bx + W * 0.86 }[position];
+  const top = { centre: by + H * 0.46 - h / 2, upper: by + H * 0.27 - h / 2, bc: by + H * 0.86 - h, br: by + H * 0.88 - h }[position];
+  const anchor = position === "br" ? "end" : "middle";
+  const lx = position === "br" ? cx - logoW : cx - logoW / 2;
 
   const paint = { gold: `url(#${p}gold)`, silver: `url(#${p}silver)`, rose: `url(#${p}rose)`, print: c.ink, engrave: "#2b170c", deboss: "#000" }[c.method];
   const op = c.method === "deboss" ? 0.3 : c.method === "engrave" ? 0.62 : 1;
