@@ -406,8 +406,8 @@ html.js [data-reveal] { transform: translateY(16px); transition-duration: 0.55s;
 .nbs-book { position: absolute; inset: 0; transition: transform 0.7s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.3s; }
 .nbs-stage:hover .nbs-book { transition: transform 0.35s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.3s; }
 .nbs-inside svg { width: 100%; height: 100%; display: block; }
-.mk { position: absolute; inset: 5% 6% 15%; display: grid; place-items: center; }
-.mk canvas { max-width: 100%; max-height: 100%; width: auto; height: auto; opacity: 0; transition: opacity 0.4s cubic-bezier(0.23, 1, 0.32, 1); }
+.mk { position: absolute; inset: 5% 6% 15%; }
+.mk canvas { width: 100%; height: 100%; object-fit: contain; opacity: 0; transition: opacity 0.4s cubic-bezier(0.23, 1, 0.32, 1); }
 .mk.on canvas { opacity: 1; }
 .mk-folio canvas { filter: drop-shadow(12px 18px 18px rgba(27, 28, 77, 0.32)); }
 .mk-src { position: absolute; width: 0; height: 0; overflow: hidden; visibility: hidden; }
